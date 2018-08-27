@@ -24,11 +24,6 @@ if ((Get-Service -name "TrustedInstaller").StartType -eq "Automatic"){
 	Set-Service -name "TrustedInstaller" -StartupType "Manual"
 }
 
-# cleanup desktop
-if (Test-Path("C:\Users\Public\Desktop\Tad.lnk")){ 	rm "C:\Users\Public\Desktop\Tad.lnk"     }
-if (Test-Path("C:\Users\Public\Desktop\VcXsrv.lnk")){ 	rm "C:\Users\Public\Desktop\VcXsrv.lnk"  }
-if (Test-Path("C:\Users\Public\Desktop\XLaunch.lnk")){	rm "C:\Users\Public\Desktop\XLaunch.lnk" }
-
 # Enable autologin
 if((Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "AutoAdminLogon").AutoAdminLogon -eq 0) {
 	Write-Host "Enabling auto logon..."

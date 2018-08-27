@@ -41,6 +41,7 @@ $i+=@{
 	link="a.bat"
 }
 
+# Any applicable Hotfixes
 #$i+=@{
 #	name='CxSAST 8.7 HF1'
 #	program='C:\Program Files\Checkmarx\Checkmarx Engine Server\Engine Server\CxEngineAgent.exe'
@@ -66,6 +67,7 @@ if($val.CustomerFeedback -ne 0) {
 	Set-ItemProperty -Path "HKLM:\Software\Wow6432Node\Microsoft\Microsoft SQL Server\140\" -Name "EnableErrorReporting" -Type DWord -Value 0
 }
 
+# Enable remote MSSQL connection for troubleshooting
 if (!(Get-NetFirewallRule | where {$_.Name -eq "MSSQLExternal"})) {
 	Write-Host "Enabling MSSQL remote connections..."
 	# open firewall
@@ -88,7 +90,7 @@ if (!(Get-NetFirewallRule | where {$_.Name -eq "MSSQLExternal"})) {
 }
 
 
-# Check for license and it's correctness
+# Check for license correctness
 if (!(Test-Path "license.cxl")) {
   # first generate the HID, we'll need it later
   $hidall=(& "c:\Program Files\Checkmarx\HID\HID.exe") | out-string
@@ -109,16 +111,6 @@ if (!(Test-Path "license.cxl")) {
   Restart-Service CxSystemManager
 }
 
-if (!(Test-Path("C:\Users\vagrant\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"))){
-	Write-Output "Copying bookmarks"
-	# start chrome so it has a chance to create the user profile
-	& "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-	Start-Sleep -m 5000
-	taskkill /IM chrome.exe
-
-	cp "$installfolder\Bookmarks" "C:\Users\vagrant\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
-}
-
 # set Checkmarx admin password
 Write-Output "Setting admin password"
 & "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\130\Tools\Binn\SQLCMD.EXE" -Q "UPDATE [CxDB].[dbo].Users SET Password = '$admin_password', SaltForPassword = '$admin_password_salt', IsAdviseChangePassword = 0 WHERE username='admin@cx'"
@@ -135,9 +127,9 @@ set IDENTITY_INSERT [CxDB].[dbo].Users off;
 "
 #>
 
-# eenable confidence level
+# enable confidence level
 # "update [CxDB].[Config].[CxEngineConfigurationKeysMeta] set DefaultValue = 'true' WHERE (KeyName = 'CALCULATE_CONFIDENCE_LEVEL')"
 
-#to enable CL log 
+# enable CL log 
 #    update [CxDB].[Config].[CxEngineConfigurationKeysMeta] set DefaultValue = 'true' WHERE (KeyName = 'WRITE_CONFIDENCE_LEVEL_TO_LOG')"
 # log is in AppData\Local\\Checkmarx\Checkmarx Engine Server\Engine Server\Scans\{projecHash}\ConfidenceLevelLogs
